@@ -1,0 +1,58 @@
+repositories:
+- name: grafana
+  url: https://grafana.github.io/helm-charts
+
+- name: prometheus-grafana
+  url: https://prometheus-community.github.io/helm-charts
+
+releases:
+
+- name: grafana
+  namespace: lgtm
+  createNamespace: true
+  chart: grafana/grafana
+  values:
+  - ./grafana/values-grafana.yaml 
+
+- name: loki
+  namespace: lgtm
+  createNamespace: true
+  chart: grafana/loki-distributed
+  values:
+  - ./loki/values-loki.yaml
+  # - ./loki/small.yaml #20gb/day 7d retation
+  # - ./loki/large.yaml #50gb/day 7d retation
+
+
+- name: mimir
+  namespace: lgtm
+  createNamespace: true
+  chart: grafana/mimir-distributed
+  values:
+  - ./mimir/values-mimir.yaml
+  # - ./mimir/small.yaml # up to 1m metrics
+  # - ./mimir/large.yaml # up to 10m metrics
+
+
+- name: prometheus
+  namespace: lgtm
+  createNamespace: true
+  chart: prometheus-community/kube-prometheus-stack
+  values:
+  - ./prometheus/values-prometheus.yaml
+
+- name: promtail
+  namespace: lgtm
+  createNamespace: true
+  chart: grafana/promtail
+  values:
+  - ./promtail/values-promtail.yaml
+
+- name: tempo
+  namespace: lgtm
+  createNamespace: true
+  chart: grafana/tempo-distributed
+  values:
+  - ./tempo/values-tempo.yaml
+  # - ./tempo/small.yaml # up to 1m traces
+  # - ./tempo/large.yaml # up to 10m traces

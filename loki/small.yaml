@@ -1,0 +1,168 @@
+compactor:
+  kind: Deployment
+  replicas: 1
+  enabled: true
+  nodeSelector: {}
+  appProtocol:
+    grpc: ""
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: null
+    annotations: {}
+    claims:
+      - name: data
+        size: 10Gi
+        storageClass: null
+    enableStatefulSetAutoDeletePVC: false
+    whenDeleted: Retain
+    whenScaled: Retain
+  working_directory: /data/loki/boltdb-shipper-compactor
+  shared_store: s3
+  retention_enabled: true
+  retention_delete_delay: 24h
+  retention_delete_worker_count: 150
+  compaction_interval: 5m
+  max_retries: 0
+  chunk_retention_period: 672h
+  index_retention_period: 672h
+
+schema_config:
+  configs:
+  - from: 2020-10-24
+    store: aws
+    object_store: s3
+    schema: v11
+    index:
+      prefix: index_
+      period: 24h
+    chunks:
+      prefix: chunk_
+      period: 24h
+    retention:
+      period: 168h  
+      delete_delay: 1h
+
+storage_config:
+  aws:
+    s3: s3:@us-east-1/lambda-x-ray
+    s3forcepathstyle: true
+
+ingester:
+  kind: StatefulSet
+  replicas: 1
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+  nodeSelector: {}
+  persistence:
+    enabled: true
+    claims:
+      - name: data
+        size: 10Gi
+        storageClass: null
+  resources:
+    limits:
+      memory: 4Gi
+    requests:
+      cpu: 0.5
+      memory: 1Gi
+
+distributor:
+  replicas: 1
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+  nodeSelector: {}
+  resources:
+    limits:
+      memory: 3Gi
+    requests:
+      cpu: 1
+      memory: 2Gi
+
+
+
+
+
+# querier:
+#   replicas: 2
+#   resources:
+#     limits:
+#       memory: 4Gi
+#     requests:
+#       cpu: 1
+#       memory: 3Gi
+
+# queryFrontend:
+#   replicas: 2
+#   resources:
+#     limits:
+#       memory: 4Gi
+#     requests:
+#       cpu: 1
+#       memory: 3Gi
+
+# queryScheduler:
+#   replicas: 2
+#   resources:
+#     limits:
+#       memory: 4Gi
+#     requests:
+#       cpu: 1
+#       memory: 3Gi
+
+# ruler:
+#   replicas: 2
+#   resources:
+#     limits:
+#       memory: 3Gi
+#     requests:
+#       cpu: 1
+#       memory: 2Gi
+
+# admin_api:
+#   replicas: 1
+#   resources:
+#     limits:
+#       memory: 128Mi
+#     requests:
+#       cpu: 100m
+#       memory: 64Mi
+
+# gateway:
+#   replicas: 2
+#   resources:
+#     limits:
+#       memory: 512Mi
+#     requests:
+#       cpu: 1
+#       memory: 256Mi
+
+# indexGateway:
+#   replicas: 2
+#   resources:
+#     limits:
+#       memory: 512Mi
+#     requests:
+#       cpu: 1
+#       memory: 256Mi
+
+# memcachedChunks:
+#   enabled: true
+#   replicas: 3
+
+# memcachedFrontend:
+#   enabled: true
+#   replicas: 3
+
+# memcachedIndexQueries:
+#   enabled: true
+#   replicas: 3
+
+# memcachedIndexWrites:
+#   enabled: true
+#   replicas: 3
+

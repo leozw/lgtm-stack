@@ -1,0 +1,130 @@
+compactor:
+  persistentVolume:
+    size: 200Gi
+  resources:
+    limits:
+      memory: 6Gi
+    requests:
+      cpu: 2
+      memory: 4Gi
+  config:
+    retention_enabled: true
+    retention_period: 168h
+    retention_delete_delay: 1h
+    retention_delete_worker_count: 150
+
+distributor:
+  replicas: 6
+  resources:
+    limits:
+      memory: 4Gi
+    requests:
+      cpu: 1.5
+      memory: 3Gi
+
+ingester:
+  persistentVolume:
+    size: 500Gi
+  replicas: 15
+  resources:
+    limits:
+      memory: 12Gi
+    requests:
+      cpu: 3
+      memory: 10Gi
+
+querier:
+  replicas: 3
+  resources:
+    limits:
+      memory: 6Gi
+    requests:
+      cpu: 1.5
+      memory: 4Gi
+
+queryFrontend:
+  replicas: 3
+  resources:
+    limits:
+      memory: 6Gi
+    requests:
+      cpu: 1.5
+      memory: 4Gi
+
+queryScheduler:
+  replicas: 3
+  resources:
+    limits:
+      memory: 6Gi
+    requests:
+      cpu: 1.5
+      memory: 4Gi
+
+ruler:
+  replicas: 3
+  resources:
+    limits:
+      memory: 4Gi
+    requests:
+      cpu: 1.5
+      memory: 3Gi
+
+admin_api:
+  replicas: 2
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 200m
+      memory: 64Mi
+
+gateway:
+  replicas: 3
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 1
+      memory: 512Mi
+
+indexGateway:
+  replicas: 3
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 1
+      memory: 512Mi
+
+memcachedChunks:
+  enabled: true
+  replicas: 4
+
+memcachedFrontend:
+  enabled: true
+  replicas: 4
+
+memcachedIndexQueries:
+  enabled: true
+  replicas: 4
+
+memcachedIndexWrites:
+  enabled: true
+  replicas: 4
+
+# schema_config:
+#   configs:
+#   - from: 2020-10-24
+#     store: aws
+#     object_store: s3
+#     schema: v11
+#     index:
+#       prefix: index_
+#       period: 24h
+#     chunks:
+#       prefix: chunk_
+#       period: 24h
+#     retention:
+#       period: 168h  
+#       delete_delay: 1h
+   
