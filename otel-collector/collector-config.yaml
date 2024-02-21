@@ -4,12 +4,26 @@ receivers:
       grpc:
       http:
 
+  # prometheus:
+  #   config:
+  #     scrape_configs:
+  #       - job_name: 'exemple_job'
+  #         scrape_interval: 10s
+  #         static_configs:
+  #           - targets: ['exempĺe_svc.namespace.svc.cluster.local:<port>']
+
 exporters:
   otlphttp:
     endpoint: $URL_TEMPO
+    # headers:
+    #   Authorization: Basic $API_TOKEN_TEMPO
 
-  prometheus:                   
-    endpoint: "0.0.0.0:9090" 
+  prometheusremotewrite:
+    endpoint: $ENPOINT_PROMETHEUS_REMOTE_WRITE
+    headers:
+      X-Scope-OrgID: $ORG_UID
+  # prometheus:                       # Use if you need Prometheus to scrape Otel Collector
+  #   endpoint: "0.0.0.0:9090" 
 
 processors:
   batch:
@@ -20,7 +34,7 @@ service:
     metrics:
       receivers: [otlp] 
       processors: [batch]
-      exporters: [prometheus]
+      exporters: [prometheusremotewrite]
     traces:
       receivers: [otlp]
       processors: [batch]
