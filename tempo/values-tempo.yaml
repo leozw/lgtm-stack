@@ -92,8 +92,8 @@ serviceAccount:
   # -- Image pull secrets for the service account
   imagePullSecrets: []
   # -- Annotations for the service account
-  annotations: 
-    eks.amazonaws.com/role-arn: arn:aws:iam::<xxxxxxxxxxxx>:role/tempo 
+  annotations: {}
+  #  eks.amazonaws.com/role-arn: arn:aws:iam::<xxxxxxxxxxxx>:role/tempo 
 
   automountServiceAccountToken: false
 
@@ -1310,16 +1310,23 @@ server:
 storage:
   trace:
     backend: "s3"
+
+# Exemple AWS S3 configuration
     s3:
       endpoint: "s3.amazonaws.com"
-      bucket: "mimir-ruler-bucket-123"
+      bucket: "eks-lgtm-tempo-bucket"
       region: "us-east-1"
+      # access_key: ""     # Should be used if you do not have a service account
+      # secret_key: ""     # Should be used if you do not have a service account      
+
+# Exemple MinIO configuration
     # s3:
-    #   bucket: "eks-lgtm-tempo-bucket"
-    #   endpoint: "s3.amazonaws.com" 
-    #   # access_key: ""     # Should be used if you do not have a service account
-    #   # secret_key: ""     # Should be used if you do not have a service account
-    #   insecure: false
+    #   bucket: tempo
+    #   endpoint: minio.minio.svc.cluster.local:9000
+    #   access_key: "admin"     # Should be used if you do not have a service account
+    #   secret_key: "super-secret"     # Should be used if you do not have a service account
+    #   insecure: true
+
     # Settings for the block storage backend and buckets.
     block:
       # -- The supported block versions are specified here https://grafana.com/docs/tempo/latest/configuration/parquet/
@@ -1335,12 +1342,23 @@ storage:
   admin:
     # -- The supported storage backends are gcs, s3 and azure, as specified in https://grafana.com/docs/enterprise-traces/latest/config/reference/#admin_client_config
     backend: s3
+
+# Exemple AWS S3 configuration
     s3:
       bucket: "eks-lgtm-tempo-bucket"
       endpoint: "s3.amazonaws.com" 
       # access_key: ""       # Should be used if you do not have a service account
       # secret_key: ""       # Should be used if you do not have a service account
       insecure: false
+
+# Exemple MinIO configuration
+    # s3:
+    #   bucket: tempo
+    #   endpoint: minio.minio.svc.cluster.local:9000
+    #   access_key: "admin"     # Should be used if you do not have a service account
+    #   secret_key: "super-secret"     # Should be used if you do not have a service account
+    #   insecure: true
+
 
 # Global overrides
 

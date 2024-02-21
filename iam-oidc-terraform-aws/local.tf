@@ -1,5 +1,5 @@
 locals {
-  policy_arns = jsonencode({
+  policy_arn_mimir = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
@@ -26,7 +26,7 @@ locals {
       },
     ],
   })
-  policy_arn = jsonencode({
+  policy_arn_tempo = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
@@ -51,4 +51,30 @@ locals {
       },
     ],
   })
+
+  policy_arn_loki = jsonencode({
+  Version = "2012-10-17",
+  Statement = [
+    {
+      Effect = "Allow",
+      Action = ["s3:ListBucket", "s3:GetBucketLocation"],
+      Resource = [
+          "${module.s3-tempo.bucket-arn}"
+          ],
+    },
+    {
+      Effect = "Allow",
+      Action = [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:ListMultipartUploadParts",
+        "s3:AbortMultipartUpload",
+      ],
+      Resource = [
+          "${module.s3-loki.bucket-arn}/*"
+          ],
+    },
+  ],
+})
 }

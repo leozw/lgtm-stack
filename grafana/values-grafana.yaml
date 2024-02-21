@@ -589,6 +589,7 @@ datasources:
 
       - name: Mimir
         type: prometheus
+        uid: mimir
         access: proxy
         url: http://mimir-query-frontend.lgtm.svc.cluster.local:8080/prometheus
         isDefault: true

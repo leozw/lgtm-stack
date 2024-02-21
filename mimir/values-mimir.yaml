@@ -76,8 +76,8 @@ serviceAccount:
   name: "mimir"
   labels: {}
 
-  annotations: 
-    eks.amazonaws.com/role-arn: arn:aws:iam::<xxxxxxxxxxxx>:role/mimir 
+  annotations: {}
+  #  eks.amazonaws.com/role-arn: arn:aws:iam::<xxxxxxxxxxxx>:role/mimir 
 
 # -- Configuration is loaded from the secret called 'externalConfigSecretName'. If 'useExternalConfig' is true, then the configuration is not generated, just consumed.
 useExternalConfig: false
@@ -448,7 +448,7 @@ mimir:
     ruler_storage:
       s3:
         endpoint: "s3.amazonaws.com"
-        bucket_name: "tempo-bucket-test"
+        bucket_name: "eks-lgtm-mimir-ruler-bucket"
         region: "us-east-1"
         # access_key_id: "${AWS_SECRET_ACCESS_KEY}"   # This is a secret injected via an environment variable && should be used if you do not have a service account
         # secret_access_key: "${AWS_ACCESS_KEY_ID}"   # This is a secret injected via an environment variable && should be used if you do not have a service account
@@ -458,7 +458,7 @@ mimir:
     blocks_storage:
       s3:
         endpoint: "s3.amazonaws.com"
-        bucket_name: "mimir-ruler-bucket-123"
+        bucket_name: "eks-lgtm-mimir-bucket"
         region: "us-east-1"
         # access_key_id: "${AWS_SECRET_ACCESS_KEY}"   # This is a secret injected via an environment variable && should be used if you do not have a service account
         # secret_access_key: "${AWS_ACCESS_KEY_ID}"   # This is a secret injected via an environment variable && should be used if you do not have a service account

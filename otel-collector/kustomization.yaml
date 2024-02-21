@@ -4,7 +4,7 @@ metadata:
   name: kustomize
 generatorOptions:
   disableNameSuffixHash: true
-namespace: default
+namespace: lgtm
 resources:
   - collector-deploy.yaml
   - collector-service.yaml

@@ -24,7 +24,7 @@ Cada componente é imprescindível, e a colaboração entre eles é o que possib
 
 ---
 
-## ➕ **Dependências**
+## ➕ **Dependências**4
 
 - **Kubernetes**
 - **Helm**
@@ -51,9 +51,9 @@ Defina o **`provider`** para especificar o perfil e a região da AWS.
 2. **EKS Cluster**:
 Utilize **`data`** para recuperar informações do seu cluster EKS existente.
 3. **Buckets S3**:
-    - **`module "s3-tempo"`** e **`module "s3-mimir"`** criam buckets S3 para armazenar dados do Tempo e Mimir, respectivamente.
+    - **`module "s3-tempo"`, `module "s3-loki"`** e **** **`module "s3-mimir"`** criam buckets S3 para armazenar dados do Tempo, Loki e Mimir, respectivamente.
 4. **Roles OIDC e Políticas IAM**:
-    - **`module "iam-tempo"`** e **`module "iam-mimir"`** configuram roles IAM com políticas que permitem acesso aos buckets S3 correspondentes.
+    - **`module "s3-tempo"`, `module "s3-loki"`** e **** **`module "s3-mimir"`** configuram roles IAM com políticas que permitem acesso aos buckets S3 correspondentes.
 
 ## **Configuração do Backend para Produção**:
 
@@ -99,7 +99,7 @@ terraform {
 
 ## **Outputs do Terraform**
 
-Os outputs **`iam-mimir-arn`** e **`iam-tempo-arn`** serão gerados. Inclua esses ARNs nas annotations do Helm para Mimir e Tempo, garantindo a correta autorização de acesso aos recursos AWS.
+Os outputs **`iam-mimir-arn`, `iam-loki-arn`** e **`iam-tempo-arn`** serão gerados. Inclua esses ARNs nas annotations do Helm para Mimir e Tempo, garantindo a correta autorização de acesso aos recursos AWS.
 
 Inclua os ARNs fornecidos nas annotations dos Helms do Mimir e do Tempo, como mostrado abaixo:
 
@@ -110,7 +110,7 @@ annotations:
 
 ---
 
-## **Configuração dos Serviços: Mimir e Tempo**
+## **Configuração dos Serviços: Mimir, Loki e Tempo**
 
 A stack LGTM dispõe de configurações flexíveis para os serviços Loki, Mimir e Tempo, projetadas para se adaptar a diferentes volumes de dados e requisitos de retenção.
 
@@ -172,12 +172,12 @@ Após a remoção, o mesmo deverá ser removido do `helmfile.yaml`, para manter 
 Instação do OpenTelemetry collector basta aplicar o seguinte comando, a partir do diretório raiz:
 
 ```bash
-kubectl apply -k ./otel-collector
+kubectl apply -k ./kubernetes-otel-collector
 ```
 
 ---
 
-## **]Acessando o Grafana**
+## **Acessando o Grafana**
 
 Para visualizar as métricas e consultar dados do Mimir e Tempo (caso tenha traces), você pode usar o port-forward para acessar a interface do Grafana:
 
@@ -205,16 +205,15 @@ Explore as métricas disponíveis e faça consultas para validar os dados do Mim
 
 ## **Armazenamento de Objetos para Mimir e Tempo**
 
-Nossa LGTM Stack utiliza o MinIO como solução padrão de armazenamento de objetos para Mimir e Tempo. Entretanto, é totalmente viável substituir o MinIO por outras opções de armazenamento de objetos que sejam compatíveis. As alternativas incluem:
+Nossa LGTM Stack utiliza o AWS S3 como solução padrão de armazenamento de objetos para Mimir e Tempo. Entretanto, é totalmente é possível substituir o AWS S3 por outras opções de armazenamento de objetos que sejam compatíveis. As alternativas incluem:
 
 - AWS S3
+- MinIO
 - Google Cloud Storage
 - Azure Blob Storage
 - Qualquer sistema compatível com a API S3
 
 Para integrar Mimir e Tempo com um sistema de armazenamento alternativo, como o AWS S3, é necessário adaptar as configurações nos respectivos arquivos de valores. Providenciamos um exemplo de como configurar a conexão com o AWS S3 no repositório. Ajuste as credenciais e outras configurações específicas de acordo com o seu provedor de armazenamento.
-
-Quando optar por utilizar os arquivos de configuração **`small.yaml`** e **`large.yaml`**, recomendamos fortemente o uso de um Cloud Object Store como o AWS S3 ou o Google Cloud Storage, em vez do MinIO, para garantir melhor desempenho e escalabilidade.
 
 ---
 
@@ -246,19 +245,19 @@ Além disso, existe uma configuração alternativa, que está comentada, para a 
 **Filtragem por Annotation (Configuração Padrão):**
 
 ```yaml
+# Filtro por annotation
 - action: keep
-  regex: 'true'
-  source_labels:
-    - __meta_kubernetes_pod_annotation_promtail_logs
+  source_labels: [__meta_kubernetes_pod_annotation_promtail_logs]
+  regex: "true"
 ```
 
 **Filtragem por Namespace (Comentada):**
 
 ```yaml
-# - action: keep
-#   regex: 'default'  # Substitua 'default' pelo(s) nome(s) do(s) namespace(s) desejado(s)
-#   source_labels:
-#     - __meta_kubernetes_namespace
+# Filtro por namespace   
+- action: keep
+  source_labels: [__meta_kubernetes_namespace]
+  regex:  "^(default|lgtm)$" # Adicione os namespaces desejados
 ```
 
 Para ativar a filtragem por namespace, descomente essas linhas e ajuste o valor de **`regex`** para o nome do namespace que deseja monitorar.
@@ -284,3 +283,8 @@ O repositório está estruturado com diretórios para cada serviço (Grafana, Lo
 ## **Contribuições**
 
 Contribuições são bem-vindas.
+
+
+
+
+

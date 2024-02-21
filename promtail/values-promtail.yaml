@@ -425,7 +425,21 @@ config:
   snippets:
     pipelineStages:
       - cri: {}
+      - json:
+          expressions:
+            timestamp: timestamp
+            loglevel: level
+            logger: logger
+            message: message
     common:
+      # Filtro por annotation
+      # - action: keep
+      #   source_labels: [__meta_kubernetes_pod_annotation_promtail_logs]
+      #   regex: "true" 
+      # Filtro por namespace   
+      - action: keep
+        source_labels: [__meta_kubernetes_namespace]
+        regex:  "^(default|lgtm)$" # Adicione os namespaces desejados
       - action: replace
         source_labels:
           - __meta_kubernetes_pod_node_name
@@ -517,24 +531,14 @@ config:
             regex: ^;*([^;]+)(;.*)?$
             action: replace
             target_label: component
-          # Filtro por annotation
-          - source_labels:
-              - __meta_kubernetes_pod_annotation_promtail_logs
-            regex: "true"
-            action: keep            
-          # Filtro por namespace (descomente e ajuste conforme necessário)
-          - source_labels:
-              - __meta_kubernetes_namespace
-            regex: ambassador 
-            action: keep
-        {{- if .Values.config.snippets.addScrapeJobLabel }}
-        - replacement: kubernetes-pods
-          target_label: scrape_job
-        {{- end }}
-        {{- toYaml .Values.config.snippets.common | nindent 4 }}
-        {{- with .Values.config.snippets.extraRelabelConfigs }}
-        {{- toYaml . | nindent 4 }}
-        {{- end }}
+          {{- if .Values.config.snippets.addScrapeJobLabel }}
+          - replacement: kubernetes-pods
+            target_label: scrape_job           
+          {{- end }}
+          {{- toYaml .Values.config.snippets.common | nindent 4 }}
+          {{- with .Values.config.snippets.extraRelabelConfigs }}
+          {{- toYaml . | nindent 4 }}
+          {{- end }}
 
   # -- Config file contents for Promtail.
   # Must be configured as string.

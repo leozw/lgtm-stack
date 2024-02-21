@@ -131,6 +131,7 @@ loki:
         dir: /var/loki/wal
 
     limits_config:
+      retention_period: 24h
       enforce_metric_name: false
       reject_old_samples: true
       reject_old_samples_max_age: 168h
@@ -177,8 +178,8 @@ loki:
       {{- end }}
 
     table_manager:
-      retention_deletes_enabled: false
-      retention_period: 0s
+      retention_deletes_enabled: true
+      retention_period: 24h
 
     query_range:
       align_queries_with_step: true
@@ -229,14 +230,24 @@ loki:
 
 
   storageConfig:
+# Exemple AWS S3 configuration
     aws:
-      s3: s3://us-east-1/mimir-ruler-bucket-123
+      s3: s3://us-east-1/eks-lgtm-loki-bucket
       s3forcepathstyle: true
       endpoint: "s3.amazonaws.com"
-      bucketnames: "mimir-ruler-bucket-123"
+      bucketnames: "eks-lgtm-loki-bucket"
       region: "us-east-1"
       # access_key_id: ""     # Should be used if you do not have a service account
       # secret_access_key: ""     # Should be used if you do not have a service account
+
+# Exemple MinIO configuration
+    # aws:
+    #   s3: s3://admin:senhafacil@minio/minio/minio.svc.cluster.local:9000
+    #   s3forcepathstyle: true
+    #   bucketnames: loki
+    #   endpoint: minio.minio.svc.cluster.local:9000
+    #   insecure: true      
+      
     boltdb_shipper:
       shared_store: s3
       active_index_directory: /var/loki/index
@@ -277,13 +288,14 @@ serviceAccount:
   create: true
   # -- The name of the ServiceAccount to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: null
+  name: loki
   # -- Image pull secrets for the service account
   imagePullSecrets: []
   # -- Labels for the service account
   labels: {}
   # -- Annotations for the service account
   annotations: {}
+    # eks.amazonaws.com/role-arn: arn:aws:iam::<xxxxxxxxxxxx>:role/loki 
   # -- Set this toggle to false to opt out of automounting API credentials for the service account
   automountServiceAccountToken: true
 
