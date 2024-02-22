@@ -270,7 +270,7 @@ Para implantar esta stack com eficiência, é importante considerar os requisito
 
 É recomendável avaliar cuidadosamente as necessidades de CPU, memória e armazenamento, ajustando o Cluster ou NodePool de acordo com essas demandas. Esta avaliação ajudará a garantir que a stack opere de forma estável e eficiente.
 
-![resources](https://cdn.discordapp.com/attachments/890968993110839316/1203041712172175480/image.png?ex=65cfa6e7&is=65bd31e7&hm=d8b685f75678bf327a95faa818470f2d84df3e844cc73ba32e097cf044cc8d5f&)
+![resources](https://media.discordapp.net/attachments/890968993110839316/1201887893917016104/image.png?ex=65e723d3&is=65d4aed3&hm=9afa359b3aee9ca08030b49992f940cc693c06ae3fc9cae075ac932fed970123&=&format=webp&quality=lossless&width=773&height=468)
 
 ---
 
@@ -283,8 +283,3 @@ O repositório está estruturado com diretórios para cada serviço (Grafana, Lo
 ## **Contribuições**
 
 Contribuições são bem-vindas.
-
-
-
-
-
